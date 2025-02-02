@@ -7,7 +7,8 @@ const movieSchema = new mongoose.Schema({
         required: true,
         trim: true,
         minlength:5,
-        maxlength: 50
+        maxlength: 50,
+        unique: true
     },
     genre: {
         type: genreSchema,
@@ -39,4 +40,4 @@ function validateMovie(movie) {
 }
 
 exports.Movie = Movie;
-exports.validateMovie = validateMovie;
+exports.validate = validateMovie;
