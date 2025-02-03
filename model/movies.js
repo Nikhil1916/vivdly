@@ -35,8 +35,7 @@ function validateMovie(movie) {
     numberInStock: Joi.number().min(0).required(),
     dailyRentalRate: Joi.number().min(0).required(),
   }).unknown(true);
-
-  return Joi.validate(movie, schema);
+  return schema.validate(movie);
 }
 
 exports.Movie = Movie;

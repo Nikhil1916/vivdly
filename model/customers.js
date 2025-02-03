@@ -33,7 +33,7 @@ function validateCustomer(genre) {
     isGold: Joi.boolean()
   })
 
-  return Joi.validate(genre, schema);
+  return schema.validate(genre);
 }
 
 module.exports = {Customer ,validateCustomer };
