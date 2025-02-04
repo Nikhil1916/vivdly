@@ -1,3 +1,4 @@
+const config = require("config");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
@@ -10,6 +11,13 @@ const auth = require("./routes/auth");
 const express = require("express");
 const app = express();
 
+//for test set it secret only
+if(!config.get("JWT_SECRET")) {
+  // console.log(process.env.VIDLY_JWT_SECRET);
+  // console.log(config.get("JWT_SECRET")+" p");
+  console.error("FATAL ERROR: jwt secret not found");
+  process.exit(1);
+}
 mongoose
   .connect("mongodb+srv://nikhilchawla9013:zJLoQDn0v4Bi4lbS@cluster0.m7uwx.mongodb.net/vivdly")
   .then(() => console.log("Connected to MongoDB..."))

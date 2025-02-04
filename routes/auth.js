@@ -3,6 +3,8 @@ const { User } = require("../model/users");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
 class Auth {
   constructor() {
@@ -21,11 +23,12 @@ class Auth {
             //we are not sending 404 as we dont want user to know whats is wrong for security
           return res.send("Invalid Email or password")
         }
-        console.log(_.pick(req.body, ['password']), _.pick(userCheck, ['password']));
         const isPasswordValid = await bcrypt.compare(password, userCheck.password);
         if(!isPasswordValid) {
           return res.send("Invalid Email or password")
         }
+        const token = await jwt.sign({_id:userCheck._id}, config.get("JWT_SECRET"));
+        res.cookie("token", token);
         return res.send(true);
       } catch (e) {
         return res.status(400).send("Error " + e?.message);
