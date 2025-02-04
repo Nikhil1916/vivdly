@@ -6,6 +6,7 @@ const customers = require("./routes/customers");
 const movies = require("./routes/movies");
 const rentals = require("./routes/rentals");
 const user = require("./routes/users");
+const auth = require("./routes/auth");
 const express = require("express");
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/customers", customers);
 app.use("/movies", movies);
 app.use("/rentals", rentals);
 app.use("/user", user);
+app.use("/auth", auth);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

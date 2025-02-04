@@ -1,5 +1,7 @@
 const express = require("express");
 const { User, validate } = require("../model/users");
+const _ = require("lodash");
+const bcrypt = require("bcrypt");
 
 class Users {
   constructor() {
@@ -22,9 +24,10 @@ class Users {
           password,
           emailId,
         });
-
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
         await user.save();
-        res.send(user);
+        res.send(_.pick(user, ['name','emailId']));
       } catch (e) {
         return res.status(400).send("Error " + e?.message);
       }
