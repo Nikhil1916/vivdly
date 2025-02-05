@@ -2,6 +2,8 @@ const express = require("express");
 const { User, validate } = require("../model/users");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
 class Users {
   constructor() {
@@ -27,7 +29,10 @@ class Users {
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
         await user.save();
-        res.send(_.pick(user, ['name','emailId']));
+        const token = await jwt.sign({_id:user._id}, config.get("JWT_SECRET"));
+        res.header('x-auth-token',token);//for custom header prefix it with x-
+        // res.cookie("token", token);
+        return res.send(_.pick(user, ['name','emailId']));
       } catch (e) {
         return res.status(400).send("Error " + e?.message);
       }
