@@ -2,13 +2,24 @@ const express = require("express");
 const { User, validate } = require("../model/users");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const config = require("config");
+const { auth } = require("../middleware/auth");
 
 class Users {
   constructor() {
     this.router = express.Router();
     this.postRoutes();
+    this.getRoutes();
+  }
+
+  getRoutes() {
+    this.router.get("/me",auth,async(req,res)=>{
+      try {
+        const user = await User.findOne({_id:req.user._id}).select("-password");
+        return res.send(user)
+      } catch(e) {  
+        return res.status(400).send("Error "+e?.message);
+      }
+    })
   }
 
   postRoutes() {
@@ -29,7 +40,7 @@ class Users {
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
         await user.save();
-        const token = await jwt.sign({_id:user._id}, config.get("JWT_SECRET"));
+        const token = await user.generateToken();
         res.header('x-auth-token',token);//for custom header prefix it with x-
         // res.cookie("token", token);
         return res.send(_.pick(user, ['name','emailId']));

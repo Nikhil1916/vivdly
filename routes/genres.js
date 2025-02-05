@@ -2,8 +2,9 @@ const Joi = require('joi');
 const express = require('express');
 const router = express.Router();
 const {Genre, validateGenre} = require("../model/genres");
+const {auth } = require('../middleware/auth');
 
-router.get('/', async (req, res) => {
+router.get('/',auth, async (req, res) => {
   const genres = await Genre.find().sort('name');
   res.send(genres);
 });

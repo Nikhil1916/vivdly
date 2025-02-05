@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Joi = require('joi');
 const PasswordComplexity = require("joi-password-complexity");
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
 const userSchema = mongoose.Schema({
   name: {
@@ -24,6 +26,11 @@ const userSchema = mongoose.Schema({
   }
 });
 
+userSchema.methods.generateToken = async function(){
+   const token = await jwt.sign({_id:this._id}, config.get("JWT_SECRET"));
+   return token;
+}
+
 const User = mongoose.model("User", userSchema);
 const complexityOptions = {
     min: 8, // Minimum length of 8 characters
@@ -44,5 +51,6 @@ function validate(user) {
 
   return schema.validate(user);
 }
+
 
 module.exports = {User ,validate };
