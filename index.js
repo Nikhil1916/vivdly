@@ -2,6 +2,9 @@ const config = require("config");
 const Joi = require("joi");
 Joi.objectId = require("joi-objectid")(Joi);
 const mongoose = require("mongoose");
+
+//add this for all routes
+require("express-async-errors");
 const genres = require("./routes/genres");
 const customers = require("./routes/customers");
 const movies = require("./routes/movies");
@@ -9,6 +12,7 @@ const rentals = require("./routes/rentals");
 const user = require("./routes/users");
 const auth = require("./routes/auth");
 const cookieParser = require("cookie-parser");
+const error = require("./middleware/error");
 const express = require("express");
 const app = express();
 
@@ -19,6 +23,7 @@ if(!config.get("JWT_SECRET")) {
   console.error("FATAL ERROR: jwt secret not found");
   process.exit(1);
 }
+
 
 if(!config.get("DB_URL")) {
   // console.log(process.env.VIDLY_JWT_SECRET);
@@ -42,10 +47,7 @@ app.use("/movies", movies);
 app.use("/rentals", rentals);
 app.use("/user", user);
 app.use("/auth", auth);
-app.use((err, req, res, next) => {
-  console.error(err.stack); // Log the error for debugging
-  res.status(500).json({ message: 'Something went wrong!', error: err.message });
-});
+app.use(error);
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);

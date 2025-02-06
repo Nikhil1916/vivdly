@@ -12,7 +12,6 @@ class Auth {
 
   postRoutes() {
     this.router.post("/", async (req, res) => {
-      try {
         const { error } = this.validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
         const { name, password, emailId } = req.body;
@@ -29,9 +28,6 @@ class Auth {
         // res.cookie("token", token);/
         res.header('x-auth-token',token);//for custom header prefix it with x-
         return res.send(true);
-      } catch (e) {
-        return res.status(400).send("Error " + e?.message);
-      }
     });
   }
 
