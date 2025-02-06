@@ -42,6 +42,20 @@ app.use("/movies", movies);
 app.use("/rentals", rentals);
 app.use("/user", user);
 app.use("/auth", auth);
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Log the error for debugging
+  res.status(500).json({ message: 'Something went wrong!', error: err.message });
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1); // Exit process to avoid unknown state
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+  process.exit(1);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

@@ -23,11 +23,13 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     max:1024
-  }
+  },
+  isAdmin: Boolean,
 });
 
 userSchema.methods.generateToken = async function(){
-   const token = await jwt.sign({_id:this._id}, config.get("JWT_SECRET"));
+  console.log(this);
+   const token = await jwt.sign({_id:this._id, isAdmin: this.isAdmin}, config.get("JWT_SECRET"));
    return token;
 }
 
